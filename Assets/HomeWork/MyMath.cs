@@ -15,5 +15,16 @@ public class MyMath : MonoBehaviour
         }
     }
 
+    bool IsPrime(int number)
+    {
+        for (int i = 2; i < number; i++)
+        {
+            bool d = number % i == 0;
+            if (d)
+                return false;
+        }
+        return true;
+    }
+
         
 }

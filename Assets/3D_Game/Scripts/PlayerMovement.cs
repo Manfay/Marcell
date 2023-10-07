@@ -1,11 +1,10 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 class PlayerMover : MonoBehaviour
 {
-    [SerializeField] float speed;
-    // [SerializeField] Vector3 velocity;
+    [SerializeField] float speed = 10;
     [SerializeField] float angularSpeed = 360;
+    [SerializeField] Transform cameraTransform;
 
     void Update()
     {
@@ -13,12 +12,18 @@ class PlayerMover : MonoBehaviour
 
         if (direction != Vector3.zero)
         {
-            Vector3 velocity = direction * speed;
+            Vector3 cameraDir = cameraTransform.TransformDirection(direction);
+            cameraDir.y = 0;
+            cameraDir.Normalize();
+
+            Vector3 velocity = cameraDir * speed;
             transform.position += velocity * Time.deltaTime;
 
-
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, angularSpeed * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(cameraDir);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                angularSpeed * Time.deltaTime);
         }
     }
 
@@ -34,10 +39,8 @@ class PlayerMover : MonoBehaviour
         float z = BoolsToDirection(inputUp, inputDown);
         */
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-
-
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
 
         Vector3 direction = new(x, 0, z);
         direction.Normalize();
